@@ -13,6 +13,9 @@ sudo dnf swap ffmpeg-free ffmpeg --allowerasing -y
 #sudo dnf groupupdate sound-and-video -y
 sudo dnf install amrnb amrwb faad2 flac gpac-libs lame libde265 libfc14audiodecoder mencoder x264 x265 ffmpegthumbnailer -y
 
+# Instalar o ecossistema de virtualização
+sudo dnf install @virtualization
+
 # Instalar o 1Password
 sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
 sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
@@ -44,6 +47,8 @@ sudo dnf install 1password -y
 #flatpak install flathub dev.lizardbyte.app.Sunshine
 
 # Instalar aplicativos em flatpak
+# Instalar o Floorp Browser
+flatpak install flathub one.ablaze.floorp
 #flatpak install flathub com.discordapp.Discord
 #flatpak install flathub com.spotify.Client
 #flatpak install flathub tech.feliciano.pocket-casts
@@ -53,9 +58,11 @@ flatpak install flathub org.gnome.Boxes
 flatpak install flathub com.mattjakeman.ExtensionManager
 flatpak install flathub com.rtosta.zapzap
 flatpak install flathub com.todoist.Todoist
+flatpak install flathub com.github.wwmm.easyeffects
 flatpak install flathub org.mozilla.Thunderbird
 flatpak install flathub de.haeckerfelix.Fragments
 flatpak install flathub org.localsend.localsend_app
+flatpak install flathub dev.geopjr.Collision
 flatpak install flathub com.github.tchx84.Flatseal
 #flatpak install flathub org.nickvision.tubeconverter
 flatpak install flathub page.codeberg.libre_menu_editor.LibreMenuEditor
@@ -63,6 +70,5 @@ flatpak install flathub page.codeberg.libre_menu_editor.LibreMenuEditor
 #flatpak install flathub io.github.brunofin.Cohesion
 
 # Instalar as fontes que estão na pasta: Fontes
-# Aplicativos para instalar depois manualmente: DaVinci Resolve, Figma for Desktop, Insync
-# O que adicionar como webapp depois: Trello
-# Ajustar os problemas do DaVinci Resolve segundo esse tutorial: https://github.com/H3rz3n/Davinci-Resolve-Fedora-38-39-40-Fix
+# Aplicativos para instalar depois manualmente: VS Code insiders, Insync
+# O que adicionar como webapp depois: Spotify
