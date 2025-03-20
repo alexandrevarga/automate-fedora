@@ -1,74 +1,88 @@
 #!/bin/bash
 
-# Instalar o RPM Fusion
-sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+# Função para exibir mensagens formatadas
+echo_message() {
+  echo -e "\e[1;32m$1\e[0m"
+}
 
-# Instalar o driver da NVIDIA e CUDA
-#sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-cuda-libs -y
-#sudo dnf install nvidia-vaapi-driver -y
+# Alterar o arquivo /etc/dnf/dnf.conf para incluir max_parallel_downloads=20
+echo_message "Verificando e aplicando configuração de max_parallel_downloads=20"
+if ! grep -q '^max_parallel_downloads=20' /etc/dnf/dnf.conf; then
+  echo 'max_parallel_downloads=20' | sudo tee -a /etc/dnf/dnf.conf
+else
+  echo_message "Configuração já aplicada."
+fi
+
+# Verificar e instalar atualizações
+echo_message "Verificando e instalando atualizações do sistema"
+sudo dnf upgrade -y
+
+# Função para verificar se o pacote está instalado
+is_installed() {
+  sudo dnf list installed "$1" &> /dev/null
+}
+
+# Função para instalar pacotes com verificação e mensagem
+install_package() {
+  if is_installed "$1"; then
+    echo_message "$1 já está instalado. Pulando..."
+  else
+    echo_message "Instalando $1..."
+    sudo dnf install -y "$1"
+  fi
+}
+
+# Instalar o RPM Fusion
+echo_message "Adicionando RPM Fusion"
+sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 # Corrigir os problemas de codec
-sudo dnf swap ffmpeg-free ffmpeg --allowerasing -y
-#sudo dnf groupupdate multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
-#sudo dnf groupupdate sound-and-video -y
-sudo dnf install amrnb amrwb faad2 flac gpac-libs lame libde265 libfc14audiodecoder mencoder x264 x265 ffmpegthumbnailer -y
+echo_message "Corrigindo codecs e instalando bibliotecas adicionais"
+sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing
+install_package amrnb
+install_package amrwb
+install_package faad2
+install_package flac
+install_package gpac-libs
+install_package lame
+install_package libde265
+install_package libfc14audiodecoder
+install_package mencoder
+install_package x264
+install_package x265
+install_package ffmpegthumbnailer
 
 # Instalar o ecossistema de virtualização
-sudo dnf install @virtualization
+echo_message "Instalando virtualização"
+sudo dnf group install -y virtualization
 
 # Instalar o 1Password
+echo_message "Configurando 1Password"
 sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
-sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
-sudo dnf install 1password -y
+if [ ! -f /etc/yum.repos.d/1password.repo ]; then
+  echo_message "Adicionando repositório 1Password"
+  sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+else
+  echo_message "Repositório 1Password já existe."
+fi
+install_package 1password
 
-# Instalar o Piper para gerenciar o MX Master 3
-#sudo dnf install piper -y
+# Instalar aplicativos Flatpak
+echo_message "Instalando aplicativos Flatpak"
+flatpak install -y flathub one.ablaze.floorp
+flatpak install -y flathub org.gnome.Boxes
+flatpak install -y flathub com.mattjakeman.ExtensionManager
+flatpak install -y flathub com.rtosta.zapzap
+flatpak install -y flathub com.todoist.Todoist
+flatpak install -y flathub com.github.wwmm.easyeffects
+flatpak install -y flathub org.mozilla.Thunderbird
+flatpak install -y flathub de.haeckerfelix.Fragments
+flatpak install -y flathub org.localsend.localsend_app
+flatpak install -y flathub dev.geopjr.Collision
+flatpak install -y flathub com.github.tchx84.Flatseal
+flatpak install -y flathub page.codeberg.libre_menu_editor.LibreMenuEditor
 
-# Instalar o GNOME Tweaks para configurar o botão de minimizar
-#sudo dnf install gnome-tweaks -y
+echo_message "Script de pós-instalação concluído!"
 
-# Instalar o Google Chrome (e remover o aviso de gerenciado pela organização)
-#sudo dnf install fedora-workstation-repositories -y
-#sudo dnf config-manager --set-enabled google-chrome
-#sudo dnf install google-chrome-stable -y
-#sudo dnf remove fedora-chromium-config -y
-
-# Instalar as fontes da Microsoft
-#sudo dnf install https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm -y
-
-# Instalar ferramentas para jogos
-#sudo dnf install steam -y
-#flatpak install flathub com.vysp3r.ProtonPlus
-#flatpak install flathub com.steamgriddb.steam-rom-manager
-#flatpak install flathub com.steamgriddb.SGDBoop
-#flatpak install flathub info.cemu.Cemu
-#flatpak install flathub com.usebottles.bottles
-#flatpak install flathub com.heroicgameslauncher.hgl
-#flatpak install flathub dev.lizardbyte.app.Sunshine
-
-# Instalar aplicativos em flatpak
-# Instalar o Floorp Browser
-flatpak install flathub one.ablaze.floorp
-#flatpak install flathub com.discordapp.Discord
-#flatpak install flathub com.spotify.Client
-#flatpak install flathub tech.feliciano.pocket-casts
-#flatpak install flathub com.obsproject.Studio
-#flatpak install flathub io.github.celluloid_player.Celluloid
-flatpak install flathub org.gnome.Boxes
-flatpak install flathub com.mattjakeman.ExtensionManager
-flatpak install flathub com.rtosta.zapzap
-flatpak install flathub com.todoist.Todoist
-flatpak install flathub com.github.wwmm.easyeffects
-flatpak install flathub org.mozilla.Thunderbird
-flatpak install flathub de.haeckerfelix.Fragments
-flatpak install flathub org.localsend.localsend_app
-flatpak install flathub dev.geopjr.Collision
-flatpak install flathub com.github.tchx84.Flatseal
-#flatpak install flathub org.nickvision.tubeconverter
-flatpak install flathub page.codeberg.libre_menu_editor.LibreMenuEditor
-#flatpak install flathub io.github.pwr_solaar.solaar
-#flatpak install flathub io.github.brunofin.Cohesion
-
-# Instalar as fontes que estão na pasta: Fontes
 # Aplicativos para instalar depois manualmente: VS Code insiders, Insync
 # O que adicionar como webapp depois: Spotify
