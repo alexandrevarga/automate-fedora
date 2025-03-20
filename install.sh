@@ -84,5 +84,6 @@ flatpak install -y flathub page.codeberg.libre_menu_editor.LibreMenuEditor
 
 echo_message "Script de pós-instalação concluído!"
 
-# Aplicativos para instalar depois manualmente: VS Code insiders, Insync
-# O que adicionar como webapp depois: Spotify
+echo_message Lembrete:
+echo_message Aplicativos para instalar manualmente: VS Code insiders
+echo_message Adicionar como webapp: Spotify
