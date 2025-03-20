@@ -56,23 +56,16 @@ install_package ffmpegthumbnailer
 echo_message "Instalando virtualização"
 sudo dnf group install -y virtualization
 
-# Instalar o 1Password
-echo_message "Configurando 1Password"
-sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
-if [ ! -f /etc/yum.repos.d/1password.repo ]; then
-  echo_message "Adicionando repositório 1Password"
-  sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
-else
-  echo_message "Repositório 1Password já existe."
-fi
-install_package 1password
+# Instalar monitoramento
+echo_message "Instalando monitoramento"
+sudo dnf install htop btop -y
 
 # Instalar aplicativos Flatpak
 echo_message "Instalando aplicativos Flatpak"
 flatpak install -y flathub one.ablaze.floorp
 flatpak install -y flathub org.gnome.Boxes
 flatpak install -y flathub com.mattjakeman.ExtensionManager
-flatpak install -y flathub com.rtosta.zapzap
+flatpak install -y flathub com.bitwarden.desktop
 flatpak install -y flathub com.todoist.Todoist
 flatpak install -y flathub com.github.wwmm.easyeffects
 flatpak install -y flathub org.mozilla.Thunderbird
@@ -80,9 +73,14 @@ flatpak install -y flathub de.haeckerfelix.Fragments
 flatpak install -y flathub org.localsend.localsend_app
 flatpak install -y flathub dev.geopjr.Collision
 flatpak install -y flathub com.github.tchx84.Flatseal
+flatpak install -y flathub io.github.ungoogled_software.ungoogled_chromium
 flatpak install -y flathub page.codeberg.libre_menu_editor.LibreMenuEditor
 
+echo ""
 echo_message "Script de pós-instalação concluído!"
-
-echo_message "Lembrete: Aplicativos para instalar manualmente: VS Code insiders"
-echo_message "Adicionar como webapp: Spotify"
+echo ""
+echo_message "Lembrete: Aplicativos para instalar manualmente:"
+echo "VS Code insiders"
+echo "Spotify - Como webApp"
+echo ""
+echo ""
