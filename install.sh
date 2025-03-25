@@ -54,7 +54,7 @@ install_package ffmpegthumbnailer
 
 # Instalar o ecossistema de virtualização
 echo_message "Instalando virtualização"
-sudo dnf group install -y virtualization
+sudo dnf install -y @virtualization
 
 # Instalar monitoramento
 echo_message "Instalando monitoramento"
